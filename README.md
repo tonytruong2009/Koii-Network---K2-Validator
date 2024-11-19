@@ -111,14 +111,31 @@ sh -c "$(curl -sSfL https://raw.githubusercontent.com/koii-network/k2-release/ma
 echo 'export PATH="/home/koii/.local/share/koii/install/active_release/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 koii config set --url https://testnet.koii.network
+koii config get
+
 ```
 
 This scipt will install and configure the validator software with an identity key and the `koii` cli configured for `testnet`. It is important to note that this identity key created IS NOT your validator identity. If you have a private key which is funded for staking with a validator you can replace the one generated with this script. 
 
 If everything is configured correctly you can test it by running `koii balance` which will return the balance of the local key.
 
-### Step 3: Run the System Tuner
+### Step 3: Open port and run the System Tuner
 
+Open port
+```bash
+sudo ufw allow ssh 
+sudo ufw allow 10000:10500/udp
+sudo ufw allow 10000:10500/tcp
+sudo ufw allow 10899/tcp
+sudo ufw allow 10900/tcp
+```
+Check Port and ping
+
+```bash
+sudo ufw status
+curl -I https://testnet.koii.network
+sudo netstat -tuln | grep LISTEN
+```
 This will configure certain aspects of your system to better support the validator.
 
 ```bash
@@ -152,29 +169,97 @@ It's recommended that you use `systemctl` to manage the validator process. To se
 Write a service configuration using the editor of your choice (nano, vim, etc). Do this as a system user with root permissions, not your validator user.
 
 ```bash
-sudo nano /etc/systemd/system/koii-validator.service
+sudo nano /etc/systemd/system/systuner.service
+```
+Paste the service configuration below into your editor.
+
+```bash
+[Unit]
+Description=Koii System Tuner
+After=network.target
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=1
+ExecStart=/home/koii/.local/share/koii/install/active_release/bin/koii-sys-tuner --user koii
+[Install]
+WantedBy=multi-user.target
+```
+**Start and Enable the service**
+
+```bash
+sudo systemctl start systuner
+sudo systemctl enable systuner
+
+```
+
+```bash
+sudo nano /home/koii/validator.sh
+
 ```
 
 Paste the service configuration below into your editor.
 
 ```makefile
+#!/bin/sh
+exec /home/koii/.local/share/koii/install/active_release/bin/koii-validator \
+--identity /home/koii/validator-keypair.json  \
+--vote-account /home/koii/vote-account-keypair.json \
+--ledger /home/koii/ledger/ledgerdb \
+--accounts /home/koii/accounts/accountdb \
+--log /home/koii/koii-rpc.log \
+--rpc-bind-address 0.0.0.0 \
+--rpc-port 10899 \
+--gossip-port 10001 \
+--dynamic-port-range 10002-10500 \
+--enable-rpc-transaction-history \
+--enable-cpi-and-log-storage \
+--known-validator Bs3LDTq3rApDqjU4vCfDrQFjixHk1cW8rYoyc47bCog6 \
+--entrypoint entrypoint-1.testnet.koii.network:10001 \
+--entrypoint entrypoint-2.testnet.koii.network:10001 \
+--rpc-faucet-address rpc-faucet.testnet.koii.network:9900 \
+--init-complete-file /home/koii/init-completed \
+--no-wait-for-vote-to-start-leader \
+--enable-extended-tx-metadata-storage \
+--maximum-full-snapshots-to-retain 20 \
+--maximum-incremental-snapshots-to-retain 20 \
+--limit-ledger-size 200000000 \
+--only-known-rpc \
+--wal-recovery-mode skip_any_corrupted_record
+--expected-genesis-hash 3J1UybSMw4hCdTnQoVqVC3TSeZ4cd9SkrDQp3Q9j49VF
+--expected-bank-hash 2Yvcz1QWRemddmoFhumBESUzeZiepXA8DZu3g2Z9Kh2J
+--expected-shred-version 9890
+```
+```bash
+sudo nano /etc/systemd/system/koii-validator.service
+```
+Paste the service configuration below into your editor.
+
+```bash
 [Unit]
 Description=Koii Validator
 After=network.target
-
+Wants=systuner.service
+StartLimitIntervalSec=0
 [Service]
 User=koii
 Group=koii
+LimitNOFILE=1000000
+LogRateLimitIntervalSec=0
 Environment="PATH=/home/koii/.local/share/koii/install/active_release/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
-ExecStart=/home/koii/.local/share/koii/install/active_release/bin/koii-validator --identity /home/koii/validator-keypair.json --ledger /home/koii/validator-ledger --accounts /home/koii/validator-accounts --entrypoint k2-testnet-validator-1.koii.live:10001 --rpc-port 10899 --dynamic-port-range 10000-10500 --limit-ledger-size --gossip-port 10001 --log - --rpc-bind-address 0.0.0.0
+ExecStart=/home/koii/validator.sh
 Restart=on-failure
 RestartSec=10
-
 [Install]
 WantedBy=multi-user.target
 ```
 
 Save and close your editor.
+
+```bash
+koii config set --url https://testnet.koii.network --keypair ~/validator-keypair.json
+
+```
 
 ### Step 2: Enable and Start the Koii Validator Service
 
@@ -195,6 +280,7 @@ Check the service status
 ```bash
 sudo systemctl status koii-validator.service
 ```
+(I think! Your node must be synced all blockchain at block height and then created next step)
 
 ### Step 3: Create a Vote Account
 
@@ -212,15 +298,28 @@ Using the keys created in the first portion of this guide, create a vote account
 koii create-vote-account ~/vote-account-keypair.json ~/validator-keypair.json ~/withdrawer-keypair.json
 ```
 
-### Step 4: Create a Stake Account
+### Step 4: Create a Stake Account (Transfer amount Koii from other wallet that do you want staking make validator Active)
 
 Create the staking account using the validator's identity keypair and the authorized withdrawer keypair:
 
 ```bash
-koii create-stake-account ~/stake-account-keypair.json <AMOUNT_TO_STAKE> --stake-authority ~/validator-keypair.json --withdraw-authority ~/withdrawer-keypair.json
+koii create-stake-account ~/stake-account-keypair.json <AMOUNT_TO_STAKE> --stake-authority ~/validator-keypair.json --withdraw-authority ~/authorized-withdrawer-keypair.json
 ```
 
 Where `<AMOUNT_TO_STAKE>` is the number of tokens you want to stake with.
+
+Delegate
+
+```bash
+koii delegate-stake ~/stake-account-keypair.json ~/vote-account-keypair.json --stake-authority ~/validator-keypair.json --force
+
+```
+Check status delegate
+
+```bash
+koii stake-account ~/stake-account-keypair.json
+
+```
 
 ### Step 5: Play Catchup
 
@@ -230,11 +329,8 @@ Make sure your validator is caught up with the network.
 koii catchup ~/validator-keypair.json
 ```
 
-### Step 6: Delegate Your Stake
 
-Delegate the stake to the validator using the staking account and validator's identity keypair:
-
-### some CLI useful
+### Some CLI useful
 
 ```bash
 sudo journalctl -u koii-validator.service -f
