@@ -1,5 +1,5 @@
 # K2 - The Koii Settlement Layer
-![K2 - Tick, Tock, Fast Blocks](https://docs.koii.network/assets/images/K2%20-%20Tick,%20Tock,%20Fast%20Blocks-5d576dbf6310f66a79e36af376974f24.svg)
+
 
 <div align="center">
   
