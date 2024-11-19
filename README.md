@@ -185,6 +185,9 @@ ExecStart=/home/koii/.local/share/koii/install/active_release/bin/koii-sys-tuner
 [Install]
 WantedBy=multi-user.target
 ```
+
+Save and close your editor.
+
 **Start and Enable the service**
 
 ```bash
@@ -230,9 +233,12 @@ exec /home/koii/.local/share/koii/install/active_release/bin/koii-validator \
 --expected-bank-hash 2Yvcz1QWRemddmoFhumBESUzeZiepXA8DZu3g2Z9Kh2J
 --expected-shred-version 9890
 ```
+Save and close your editor.
+
 ```bash
 sudo nano /etc/systemd/system/koii-validator.service
 ```
+
 Paste the service configuration below into your editor.
 
 ```bash
