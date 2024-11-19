@@ -98,6 +98,8 @@ Elevate into the user
 
 ```bash 
 sudo su koii
+cd ~
+sudo chmod -R 775 /home/koii
 ```
 
 ### Step 2: Install the Koii software
@@ -201,7 +203,7 @@ For the remainder of the steps please elevate your user to your validator accoun
 sudo su koii
 ```
 
-Using the keys created in the first portion of this guide, create a vote account.
+Using the keys created in the first portion of this guide, create a vote account. (transfer 2 koii to wallet validator-keypair.json)
 
 ```bash
 koii create-vote-account ~/vote-account-keypair.json ~/validator-keypair.json ~/withdrawer-keypair.json
@@ -228,6 +230,25 @@ koii catchup ~/validator-keypair.json
 ### Step 6: Delegate Your Stake
 
 Delegate the stake to the validator using the staking account and validator's identity keypair:
+
+### some CLI useful
+
+```bash
+sudo journalctl -u koii-validator.service -f
+```
+
+```bash
+koii-watchtower
+```
+
+```bash
+tail -f koii-rpc.log
+```
+Wallet:
+
+```bash
+koii balance <path_to_wallet>
+```
 
 
 
