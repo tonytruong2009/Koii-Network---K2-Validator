@@ -157,16 +157,16 @@ koii-keygen new --outfile ~/vote-account-keypair.json
 
 ```
 #### Keypairs
-#validator-keypair.json : Identity of the validator on the network. Copy this to the remote validator server at /home/koii/validator-keypair.json
 
-#vote-account-keypair.json : Voting account on the network. Copy this to the remote validator server at /home/koii/vote-account-keypair.json
+## validator-keypair.json : Identity of the validator on the network. Copy this to the remote validator server at /home/koii/validator-keypair.json
 
-#stake-account-keypair.json : Keypair for your staking wallet. Store in a secure location not on the validator since this will hold the wallet that you delegate stake from
+## vote-account-keypair.json : Voting account on the network. Copy this to the remote validator server at /home/koii/vote-account-keypair.json
 
-#authorized-withdrawer-keypair.json : Authorized withdrawer keypair, allowed to withdraw funds from your validator vote account. Store in a secure location not on the validator since this controls your vote account
+## stake-account-keypair.json : Keypair for your staking wallet. Store in a secure location not on the validator since this will hold the wallet that you delegate stake from
 
-Danger
-The authorized withdrawer keypair is the ultimate authority over your validator. This keypair will be able to withdraw from your vote account and will have additional permission to change all other aspects of your vote account. Anyone in possession of it can permanently take control of your vote account and make any changes as they please.
+## authorized-withdrawer-keypair.json : Authorized withdrawer keypair, allowed to withdraw funds from your validator vote account. Store in a secure location not on the validator since this controls your vote account
+
+Danger: The authorized withdrawer keypair is the ultimate authority over your validator. This keypair will be able to withdraw from your vote account and will have additional permission to change all other aspects of your vote account. Anyone in possession of it can permanently take control of your vote account and make any changes as they please.
 
 ### Step 1: Create a Systemctl Service File for the Validator
 
