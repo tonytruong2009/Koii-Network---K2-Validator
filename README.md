@@ -156,13 +156,17 @@ koii-keygen new --outfile ~/stake-account-keypair.json
 koii-keygen new --outfile ~/vote-account-keypair.json
 
 ```
-The authorized-withdrawer keypair is to be used as the ultimate authority over your validator. This keypair will be able to withdraw from your vote account and will have additional permission to change all other aspects of your vote account.
+#### Keypairs
+#validator-keypair.json : Identity of the validator on the network. Copy this to the remote validator server at /home/koii/validator-keypair.json
 
-This is a very important keypair since anyone in possession of it has the ability to permanently take control of your vote account and make any changes they please. Therefore, it's crucial to store your authorized-withdrawer keypair in a secure location.
+#vote-account-keypair.json : Voting account on the network. Copy this to the remote validator server at /home/koii/vote-account-keypair.json
 
-It doesn't have to be stored on your validator, and it shouldn't be stored anywhere where unauthorized people could access it.
+#stake-account-keypair.json : Keypair for your staking wallet. Store in a secure location not on the validator since this will hold the wallet that you delegate stake from
 
-It's recommended that you use `systemctl` to manage the validator process. To set up the validator service you can complete the following steps.
+#authorized-withdrawer-keypair.json : Authorized withdrawer keypair, allowed to withdraw funds from your validator vote account. Store in a secure location not on the validator since this controls your vote account
+
+Danger
+The authorized withdrawer keypair is the ultimate authority over your validator. This keypair will be able to withdraw from your vote account and will have additional permission to change all other aspects of your vote account. Anyone in possession of it can permanently take control of your vote account and make any changes as they please.
 
 ### Step 1: Create a Systemctl Service File for the Validator
 
