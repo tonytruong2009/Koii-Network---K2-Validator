@@ -353,11 +353,37 @@ koii-watchtower
 ```bash
 tail -f koii-rpc.log
 ```
+
+```bash
+tail -f -n2000 ~/koii-rpc.log
+```
+Or
+
+```bash
+tail -f -n2000 ~/koii-rpc.log | grep "WARN\|ERROR"
+```
+
 Wallet:
 
 ```bash
 koii balance <path_to_wallet>
 ```
+Deactive (stop staking)
+
+```bash
+koii deactivate-stake --stake-authority validator-keypair.json <your-stake-wallet.json> --fee-payer validator-keypair.json
+
+```
+## After deactive, i must be wait end epoch present (about 12 h/ 24h) and then next step
+
+Withdraw
+
+```bash
+koii withdraw-stake --withdraw-authority authorized-withdrawer-keypair.json <your-stake-wallet.json> <public-address-you-want to receiv koii> <amount> --fee-payer validator-keypair.json
+
+```
+
+
 
 
 
