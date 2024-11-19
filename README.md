@@ -382,6 +382,12 @@ Withdraw
 koii withdraw-stake --withdraw-authority authorized-withdrawer-keypair.json <your-stake-wallet.json> <public-address-you-want to receiv koii> <amount> --fee-payer validator-keypair.json
 
 ```
+Check Reward when you run validator (validator always synced status): choise tab reward, after 12h of epoch you will have reward
+
+```bash
+https://explorer.koii.live/address/<vote-account-keypair.json>
+
+```
 
 
 
