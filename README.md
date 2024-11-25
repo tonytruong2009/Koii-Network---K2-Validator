@@ -339,6 +339,21 @@ Make sure your validator is caught up with the network.
 koii catchup ~/validator-keypair.json
 ```
 
+### Step 6: More staking
+Transfer some koii do you want staking more and then creating a new account stake
+
+```bash
+koii-keygen new --outfile <name>.json
+```
+```bash
+koii create-stake-account <name>.json <amount> --stake-authority validator-keypair.json --withdraw-authority authorized-withdrawer-keypair.json
+```
+```bash
+koii delegate-stake <name>.json vote-account-keypair.json --stake-authority validator-keypair.json
+```
+```bash
+koii stake-account <name>.json
+```
 
 ### Some CLI useful
 
