@@ -340,7 +340,7 @@ koii catchup ~/validator-keypair.json
 ```
 
 ### Step 6: More staking
-Transfer some koii do you want staking more and then creating a new account stake
+Transfer some koii do you want staking to Wallet validator-keypair.json and then creating a new account stake
 
 ```bash
 koii-keygen new --outfile <name>.json
